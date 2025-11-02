@@ -101,14 +101,23 @@ jobs:
                   object_name = object_name.replace('\\', '/')
                   content_type = get_content_type(file_path)
                   
-                  headers = {'Content-Type': content_type}
+                  # Prepare headers
+                  headers = {}
+                  
+                  # Set Content-Type for all files
+                  headers['Content-Type'] = content_type
+                  
+                  # Special handling for HTML files
                   if file_path.suffix.lower() == '.html':
                       headers['Cache-Control'] = 'no-cache'
-                      headers['Content-Disposition'] = 'inline'  # Important: display inline, not download
+                      # CRITICAL: Set Content-Disposition to inline to prevent download
+                      headers['Content-Disposition'] = 'inline'
+                      print(f"  📄 {object_name} → Content-Type: {content_type}, Content-Disposition: inline")
                   else:
                       headers['Cache-Control'] = 'public, max-age=31536000'
+                      print(f"  📄 {object_name} → Content-Type: {content_type}")
                   
-                  print(f"  📄 {object_name} → Content-Type: {content_type}")
+                  # Upload with headers
                   bucket.put_object_from_file(
                       object_name,
                       str(file_path),
@@ -138,23 +147,38 @@ jobs:
               print("   Please configure manually in OSS console:")
               print("   Data Management → Static Page → Enable → Set index.html")
           
-          # Verify index.html was uploaded
+          # Verify index.html was uploaded and check headers
           print("\n🔍 Verifying deployment...")
           try:
               if bucket.object_exists('index.html'):
                   meta = bucket.head_object('index.html')
+                  content_type = meta.headers.get('Content-Type', 'Not set')
+                  content_disp = meta.headers.get('Content-Disposition', 'Not set')
+                  
                   print(f"✅ index.html exists")
-                  print(f"   Content-Type: {meta.headers.get('Content-Type', 'Not set')}")
-                  print(f"   Content-Disposition: {meta.headers.get('Content-Disposition', 'Not set')}")
+                  print(f"   Content-Type: {content_type}")
+                  print(f"   Content-Disposition: {content_disp}")
+                  
+                  # Validate headers
+                  if 'text/html' not in str(content_type).lower():
+                      print(f"   ⚠️ WARNING: Content-Type should be 'text/html'!")
+                  if 'inline' not in str(content_disp).lower():
+                      print(f"   ⚠️ WARNING: Content-Disposition should be 'inline'!")
+                      print(f"   ⚠️ This might cause browser to download instead of display!")
+                  else:
+                      print(f"   ✅ Headers are correct!")
               else:
                   print("❌ ERROR: index.html not found in bucket!")
           except Exception as e:
               print(f"⚠️ Could not verify index.html: {e}")
           
-          # Print access URLs
+          # Print access URLs with important warnings
           print("\n🌐 Access your website:")
-          print(f"   HTTP:  http://{bucket_name}.{endpoint}")
-          print(f"   (Use HTTP, not HTTPS for static website hosting)")
+          print(f"   ✅ CORRECT URL: http://{bucket_name}.{endpoint}")
+          print(f"   ❌ WRONG:      https://{bucket_name}.{endpoint}")
+          print(f"   ❌ WRONG:      http://{bucket_name}.{endpoint}/index.html")
+          print(f"\n   ⚠️  CRITICAL: Use HTTP (not HTTPS) and do NOT add /index.html")
+          print(f"   ⚠️  Using HTTPS or adding /index.html will trigger file download!")
           print(f"\n✅ Deployment completed successfully!")
           EOF
       
