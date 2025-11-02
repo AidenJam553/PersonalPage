@@ -34,14 +34,10 @@ jobs:
       
       - name: Configure OSS
         run: |
-          mkdir -p ~/.ossutilconfig
-          cat > ~/.ossutilconfig << EOF
-          [Credentials]
-          language=CH
-          endpoint=${{ secrets.ALIYUN_OSS_ENDPOINT }}
-          accessKeyID=${{ secrets.ALIYUN_ACCESS_KEY_ID }}
-          accessKeySecret=${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
-          EOF
+          ossutil config --endpoint ${{ secrets.ALIYUN_OSS_ENDPOINT }} \
+            --access-key-id ${{ secrets.ALIYUN_ACCESS_KEY_ID }} \
+            --access-key-secret ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} \
+            --language CH
       
       - name: Deploy to OSS
         run: |
