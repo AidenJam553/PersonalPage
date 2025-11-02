@@ -13,9 +13,13 @@
           <li><a href="#contact" @click="scrollTo('contact')">{{ t.nav.contact }}</a></li>
         </ul>
         <div class="nav-actions">
-          <button class="language-toggle" @click="toggleLanguage">
-            {{ currentLanguage === 'zh' ? 'EN' : '中文' }}
-          </button>
+          <div class="language-switch" @click="toggleLanguage">
+            <span class="switch-label" :class="{ active: currentLanguage === 'zh' }">中文</span>
+            <div class="switch-slider" :class="{ 'switch-active': currentLanguage === 'en' }">
+              <span class="switch-button"></span>
+            </div>
+            <span class="switch-label" :class="{ active: currentLanguage === 'en' }">EN</span>
+          </div>
           <button class="mobile-menu-btn" @click="toggleMobileMenu">
             <span></span>
             <span></span>
@@ -32,9 +36,13 @@
         <li><a href="#skills" @click="scrollTo('skills')">{{ t.nav.skills }}</a></li>
         <li><a href="#contact" @click="scrollTo('contact')">{{ t.nav.contact }}</a></li>
         <li>
-          <button class="language-toggle mobile" @click="toggleLanguage">
-            {{ currentLanguage === 'zh' ? 'EN' : '中文' }}
-          </button>
+          <div class="language-switch mobile" @click="toggleLanguage">
+            <span class="switch-label" :class="{ active: currentLanguage === 'zh' }">中文</span>
+            <div class="switch-slider" :class="{ 'switch-active': currentLanguage === 'en' }">
+              <span class="switch-button"></span>
+            </div>
+            <span class="switch-label" :class="{ active: currentLanguage === 'en' }">EN</span>
+          </div>
         </li>
       </ul>
     </div>
