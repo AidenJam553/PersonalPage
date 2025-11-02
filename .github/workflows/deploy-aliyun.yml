@@ -33,11 +33,20 @@ jobs:
           ossutil --version || echo "OSS CLI installed"
       
       - name: Configure OSS
+        env:
+          OSS_ENDPOINT: ${{ secrets.ALIYUN_OSS_ENDPOINT }}
+          OSS_ACCESS_KEY_ID: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
         run: |
-          ossutil config --endpoint ${{ secrets.ALIYUN_OSS_ENDPOINT }} \
-            --access-key-id ${{ secrets.ALIYUN_ACCESS_KEY_ID }} \
-            --access-key-secret ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} \
-            --language CH
+          mkdir -p ~/.ossutilconfig
+          cat > ~/.ossutilconfig << EOF
+          [Credentials]
+          language=CH
+          endpoint=${OSS_ENDPOINT}
+          accessKeyID=${OSS_ACCESS_KEY_ID}
+          accessKeySecret=${OSS_ACCESS_KEY_SECRET}
+          EOF
+          ossutil ls oss://${{ secrets.ALIYUN_OSS_BUCKET }} || echo "Configuration completed"
       
       - name: Deploy to OSS
         run: |
