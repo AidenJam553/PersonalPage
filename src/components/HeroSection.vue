@@ -28,7 +28,7 @@
             </div>
             <div class="info-item">
               <span class="info-label">{{ t.hero.location }}</span>
-              <span class="info-value">{{ currentLanguage === 'zh' ? '海外' : 'Overseas' }}</span>
+              <span class="info-value">{{ currentLanguage === 'zh' ? '内蒙古呼和浩特' : 'Hohhot, Inner Mongolia' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">{{ t.hero.phone }}</span>
