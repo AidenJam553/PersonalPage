@@ -27,12 +27,23 @@ jobs:
       
       - name: Setup Aliyun OSS CLI
         run: |
+          echo "Checking system..."
+          which curl || (apt-get update && apt-get install -y curl)
+          which wget || (apt-get update && apt-get install -y wget)
           echo "Downloading ossutil..."
-          curl -L -o ossutil64 https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64 || exit 1
+          wget --version > /dev/null 2>&1 && wget -O ossutil64 https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64 || curl -L -o ossutil64 https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64
+          if [ ! -f ossutil64 ]; then
+            echo "❌ Failed to download ossutil"
+            exit 1
+          fi
           chmod +x ossutil64
-          sudo mv ossutil64 /usr/local/bin/ossutil || exit 1
+          sudo mv ossutil64 /usr/local/bin/ossutil
+          if [ ! -f /usr/local/bin/ossutil ]; then
+            echo "❌ Failed to install ossutil"
+            exit 1
+          fi
           echo "Verifying installation..."
-          /usr/local/bin/ossutil --version || exit 1
+          /usr/local/bin/ossutil --version
           echo "✅ ossutil installed successfully"
       
       - name: Configure OSS
