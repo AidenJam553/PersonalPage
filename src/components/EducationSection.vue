@@ -1,40 +1,36 @@
 <template>
   <section id="education" class="section education-section">
     <div class="container">
-      <h2 class="section-title">教育经历</h2>
+      <h2 class="section-title">{{ t.education.title }}</h2>
       <div class="education-timeline">
         <div class="timeline-item">
           <div class="timeline-marker"></div>
           <div class="timeline-content">
             <div class="timeline-header">
-              <h3 class="school-name">莫纳什大学（硕士）</h3>
-              <span class="timeline-date">2024.02–2026.01</span>
+              <h3 class="school-name">{{ t.education.masters.school }}</h3>
+              <span class="timeline-date">{{ t.education.masters.period }}</span>
             </div>
-            <p class="major">信息技术</p>
+            <p class="major">{{ t.education.masters.major }}</p>
             <div class="education-details">
               <div class="detail-item">
-                <span class="detail-label">成绩排名:</span>
-                <span class="detail-value">前30%</span>
+                <span class="detail-label">{{ t.education.ranking }}:</span>
+                <span class="detail-value">{{ t.education.masters.ranking }}</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">GPA:</span>
+                <span class="detail-label">{{ t.education.gpa }}:</span>
                 <span class="detail-value">3.5</span>
               </div>
             </div>
             <div class="courses">
-              <h4 class="courses-title">主修课程:</h4>
+              <h4 class="courses-title">{{ t.education.courses }}:</h4>
               <div class="course-tags">
-                <span class="course-tag">软件工程</span>
-                <span class="course-tag">数据库</span>
-                <span class="course-tag">Java</span>
-                <span class="course-tag">Python</span>
-                <span class="course-tag">数据分析</span>
-                <span class="course-tag">UX/UI用户界面设计与运用</span>
-                <span class="course-tag">计算机与网络结构</span>
-                <span class="course-tag">项目管理</span>
-                <span class="course-tag">云计算</span>
-                <span class="course-tag">安卓项目开发</span>
-                <span class="course-tag">web项目设计与开发</span>
+                <span 
+                  v-for="(course, index) in (mastersCourses || [])" 
+                  :key="index" 
+                  class="course-tag"
+                >
+                  {{ course }}
+                </span>
               </div>
             </div>
           </div>
@@ -44,39 +40,30 @@
           <div class="timeline-marker"></div>
           <div class="timeline-content">
             <div class="timeline-header">
-              <h3 class="school-name">西交利物浦大学（本科）</h3>
-              <span class="timeline-date">2018.09–2023.07</span>
+              <h3 class="school-name">{{ t.education.bachelors.school }}</h3>
+              <span class="timeline-date">{{ t.education.bachelors.period }}</span>
             </div>
-            <p class="major">数字媒体技术</p>
+            <p class="major">{{ t.education.bachelors.major }}</p>
             <div class="education-details">
               <div class="detail-item">
-                <span class="detail-label">成绩排名:</span>
-                <span class="detail-value">中等</span>
+                <span class="detail-label">{{ t.education.ranking }}:</span>
+                <span class="detail-value">{{ t.education.bachelors.ranking }}</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">GPA:</span>
+                <span class="detail-label">{{ t.education.gpa }}:</span>
                 <span class="detail-value">3.0</span>
               </div>
             </div>
             <div class="courses">
-              <h4 class="courses-title">主修课程:</h4>
+              <h4 class="courses-title">{{ t.education.courses }}:</h4>
               <div class="course-tags">
-                <span class="course-tag">Java</span>
-                <span class="course-tag">数据结构</span>
-                <span class="course-tag">交互设计</span>
-                <span class="course-tag">网页设计与开发</span>
-                <span class="course-tag">Unity</span>
-                <span class="course-tag">UI设计</span>
-                <span class="course-tag">界面设计</span>
-                <span class="course-tag">面向对象程序设计</span>
-                <span class="course-tag">数据库原理</span>
-                <span class="course-tag">数字图像处理</span>
-                <span class="course-tag">嵌入式系统</span>
-                <span class="course-tag">OpenGL</span>
-                <span class="course-tag">人工智能</span>
-                <span class="course-tag">多媒体安全系统</span>
-                <span class="course-tag">安卓开发</span>
-                <span class="course-tag">摄影</span>
+                <span 
+                  v-for="(course, index) in (bachelorsCourses || [])" 
+                  :key="index" 
+                  class="course-tag"
+                >
+                  {{ course }}
+                </span>
               </div>
             </div>
           </div>
@@ -87,6 +74,15 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useLanguage } from '../composables/useLanguage'
+import { translations } from '../utils/i18n'
+import { courseTranslations } from '../utils/courseTranslations'
+
+const { currentLanguage } = useLanguage()
+const t = computed(() => translations[currentLanguage.value])
+const mastersCourses = computed(() => courseTranslations.masters[currentLanguage.value])
+const bachelorsCourses = computed(() => courseTranslations.bachelors[currentLanguage.value])
 </script>
 
 <style scoped>
@@ -108,7 +104,7 @@
   top: 0;
   bottom: 0;
   width: 2px;
-  background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+  background: var(--primary-color);
 }
 
 .timeline-item {

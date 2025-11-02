@@ -2,40 +2,55 @@
   <nav class="navbar" :class="{ 'scrolled': isScrolled }">
     <div class="container">
       <div class="nav-content">
-        <div class="logo">张博涵</div>
+        <div class="logo">{{ (t.common && t.common.name) || (currentLanguage === 'zh' ? '张博涵' : 'Bohan Zhang') }}</div>
         <ul class="nav-links">
-          <li><a href="#home" @click="scrollTo('home')">首页</a></li>
-          <li><a href="#about" @click="scrollTo('about')">关于</a></li>
-          <li><a href="#education" @click="scrollTo('education')">教育</a></li>
-          <li><a href="#experience" @click="scrollTo('experience')">经历</a></li>
-          <li><a href="#projects" @click="scrollTo('projects')">项目</a></li>
-          <li><a href="#skills" @click="scrollTo('skills')">技能</a></li>
-          <li><a href="#contact" @click="scrollTo('contact')">联系</a></li>
+          <li><a href="#home" @click="scrollTo('home')">{{ t.nav.home }}</a></li>
+          <li><a href="#about" @click="scrollTo('about')">{{ t.nav.about }}</a></li>
+          <li><a href="#education" @click="scrollTo('education')">{{ t.nav.education }}</a></li>
+          <li><a href="#experience" @click="scrollTo('experience')">{{ t.nav.experience }}</a></li>
+          <li><a href="#projects" @click="scrollTo('projects')">{{ t.nav.projects }}</a></li>
+          <li><a href="#skills" @click="scrollTo('skills')">{{ t.nav.skills }}</a></li>
+          <li><a href="#contact" @click="scrollTo('contact')">{{ t.nav.contact }}</a></li>
         </ul>
-        <button class="mobile-menu-btn" @click="toggleMobileMenu">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+        <div class="nav-actions">
+          <button class="language-toggle" @click="toggleLanguage">
+            {{ currentLanguage === 'zh' ? 'EN' : '中文' }}
+          </button>
+          <button class="mobile-menu-btn" @click="toggleMobileMenu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
       </div>
       <ul class="mobile-nav-links" :class="{ 'active': mobileMenuOpen }">
-        <li><a href="#home" @click="scrollTo('home')">首页</a></li>
-        <li><a href="#about" @click="scrollTo('about')">关于</a></li>
-        <li><a href="#education" @click="scrollTo('education')">教育</a></li>
-        <li><a href="#experience" @click="scrollTo('experience')">经历</a></li>
-        <li><a href="#projects" @click="scrollTo('projects')">项目</a></li>
-        <li><a href="#skills" @click="scrollTo('skills')">技能</a></li>
-        <li><a href="#contact" @click="scrollTo('contact')">联系</a></li>
+        <li><a href="#home" @click="scrollTo('home')">{{ t.nav.home }}</a></li>
+        <li><a href="#about" @click="scrollTo('about')">{{ t.nav.about }}</a></li>
+        <li><a href="#education" @click="scrollTo('education')">{{ t.nav.education }}</a></li>
+        <li><a href="#experience" @click="scrollTo('experience')">{{ t.nav.experience }}</a></li>
+        <li><a href="#projects" @click="scrollTo('projects')">{{ t.nav.projects }}</a></li>
+        <li><a href="#skills" @click="scrollTo('skills')">{{ t.nav.skills }}</a></li>
+        <li><a href="#contact" @click="scrollTo('contact')">{{ t.nav.contact }}</a></li>
+        <li>
+          <button class="language-toggle mobile" @click="toggleLanguage">
+            {{ currentLanguage === 'zh' ? 'EN' : '中文' }}
+          </button>
+        </li>
       </ul>
     </div>
   </nav>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useLanguage } from '../composables/useLanguage'
+import { translations } from '../utils/i18n'
 
+const { currentLanguage, setLanguage } = useLanguage()
 const isScrolled = ref(false)
 const mobileMenuOpen = ref(false)
+
+const t = computed(() => translations[currentLanguage.value])
 
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 50
@@ -51,6 +66,10 @@ const scrollTo = (id) => {
 
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value
+}
+
+const toggleLanguage = () => {
+  setLanguage(currentLanguage.value === 'zh' ? 'en' : 'zh')
 }
 
 onMounted(() => {
@@ -89,10 +108,7 @@ onUnmounted(() => {
 .logo {
   font-size: 1.5rem;
   font-weight: 700;
-  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-color);
 }
 
 .nav-links {
@@ -126,6 +142,34 @@ onUnmounted(() => {
 
 .nav-links a:hover::after {
   width: 100%;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.language-toggle {
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+}
+
+.language-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.language-toggle.mobile {
+  width: 100%;
+  margin-top: 0.5rem;
 }
 
 .mobile-menu-btn {

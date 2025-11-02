@@ -4,35 +4,35 @@
       <div class="hero-content">
         <div class="hero-text">
           <h1 class="hero-title">
-            你好，我是 <span class="highlight">张博涵</span>
+            {{ t.hero.greeting }} <span class="highlight">{{ (t.common && t.common.name) || (currentLanguage === 'zh' ? '张博涵' : 'Bohan Zhang') }}</span>
           </h1>
-          <p class="hero-subtitle">全栈开发工程师 & UI/UX 设计师</p>
+          <p class="hero-subtitle">{{ t.hero.subtitle }}</p>
           <p class="hero-description">
-            莫纳什大学信息技术专业研究生在读，拥有丰富的后端/前端以及用户界面设计经验
+            {{ t.hero.description }}
           </p>
           <div class="hero-buttons">
             <a href="#contact" class="btn btn-primary" @click="scrollTo('contact')">
-              联系我
+              {{ t.hero.contactMe }}
             </a>
             <a href="#projects" class="btn btn-secondary" @click="scrollTo('projects')">
-              查看项目
+              {{ t.hero.viewProjects }}
             </a>
           </div>
           <div class="hero-info">
             <div class="info-item">
-              <span class="info-label">年龄</span>
-              <span class="info-value">25岁</span>
+              <span class="info-label">{{ t.hero.age }}</span>
+              <span class="info-value">25{{ currentLanguage === 'zh' ? '岁' : ' years old' }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">所在地</span>
-              <span class="info-value">海外</span>
+              <span class="info-label">{{ t.hero.location }}</span>
+              <span class="info-value">{{ currentLanguage === 'zh' ? '海外' : 'Overseas' }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">电话</span>
+              <span class="info-label">{{ t.hero.phone }}</span>
               <span class="info-value">+86 13804740529</span>
             </div>
             <div class="info-item">
-              <span class="info-label">邮箱</span>
+              <span class="info-label">{{ t.hero.email }}</span>
               <span class="info-value">aidenjam533@gmail.com</span>
             </div>
           </div>
@@ -46,6 +46,13 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useLanguage } from '../composables/useLanguage'
+import { translations } from '../utils/i18n'
+
+const { currentLanguage } = useLanguage()
+const t = computed(() => translations[currentLanguage.value])
+
 const scrollTo = (id) => {
   const element = document.getElementById(id)
   if (element) {
@@ -62,7 +69,7 @@ const scrollTo = (id) => {
   position: relative;
   padding-top: 80px;
   overflow: hidden;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: #f5f7fa;
 }
 
 .hero-content {
@@ -82,10 +89,7 @@ const scrollTo = (id) => {
 }
 
 .highlight {
-  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-color);
 }
 
 .hero-subtitle {
@@ -122,7 +126,7 @@ const scrollTo = (id) => {
 }
 
 .btn-primary {
-  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  background: var(--primary-color);
   color: white;
 }
 
@@ -190,7 +194,7 @@ const scrollTo = (id) => {
   position: absolute;
   width: 500px;
   height: 500px;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.1));
+  background: rgba(37, 99, 235, 0.1);
   border-radius: 50%;
   top: -250px;
   right: -250px;

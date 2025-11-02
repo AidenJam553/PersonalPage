@@ -1,13 +1,13 @@
 <template>
   <section id="contact" class="section contact-section">
     <div class="container">
-      <h2 class="section-title">联系方式</h2>
+      <h2 class="section-title">{{ t.contact.title }}</h2>
       <div class="contact-content">
         <div class="contact-info">
           <div class="contact-item">
             <div class="contact-icon">📧</div>
             <div class="contact-details">
-              <h3 class="contact-label">邮箱</h3>
+              <h3 class="contact-label">{{ t.contact.email }}</h3>
               <a href="mailto:aidenjam533@gmail.com" class="contact-value">
                 aidenjam533@gmail.com
               </a>
@@ -17,7 +17,7 @@
           <div class="contact-item">
             <div class="contact-icon">📱</div>
             <div class="contact-details">
-              <h3 class="contact-label">电话</h3>
+              <h3 class="contact-label">{{ t.contact.phone }}</h3>
               <a href="tel:+8613804740529" class="contact-value">
                 +86 13804740529
               </a>
@@ -27,13 +27,13 @@
           <div class="contact-item">
             <div class="contact-icon">🌐</div>
             <div class="contact-details">
-              <h3 class="contact-label">项目作品</h3>
+              <h3 class="contact-label">{{ t.contact.projects }}</h3>
               <div class="contact-links">
                 <a href="https://youthtrusthub.app/" target="_blank" class="contact-link">
-                  青少年数字安全教育平台
+                  {{ currentLanguage === 'zh' ? '青少年数字安全教育平台' : 'Youth Digital Safety Education Platform' }}
                 </a>
                 <a href="https://fit5032-assignment-healthyandfitnesswebsite.pages.dev/" target="_blank" class="contact-link">
-                  运动与健康网站
+                  {{ currentLanguage === 'zh' ? '运动与健康网站' : 'Health & Fitness Website' }}
                 </a>
               </div>
             </div>
@@ -42,8 +42,8 @@
         
         <div class="contact-form-wrapper">
           <div class="contact-message">
-            <h3>期待与您合作</h3>
-            <p>如果您对我的项目或技能感兴趣，欢迎通过以上方式联系我。我随时准备讨论新的机会和挑战！</p>
+            <h3>{{ t.contact.message }}</h3>
+            <p>{{ t.contact.messageText }}</p>
           </div>
         </div>
       </div>
@@ -52,6 +52,12 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useLanguage } from '../composables/useLanguage'
+import { translations } from '../utils/i18n'
+
+const { currentLanguage } = useLanguage()
+const t = computed(() => translations[currentLanguage.value])
 </script>
 
 <style scoped>
@@ -94,7 +100,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: var(--primary-color);
   border-radius: 12px;
   flex-shrink: 0;
 }
@@ -141,7 +147,7 @@
 }
 
 .contact-form-wrapper {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: var(--primary-color);
   padding: 3rem;
   border-radius: 12px;
   color: white;

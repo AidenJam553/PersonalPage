@@ -6,7 +6,7 @@
 
 :root {
   --primary-color: #2563eb;
-  --secondary-color: #7c3aed;
+  --secondary-color: #2563eb;
   --text-primary: #1e293b;
   --text-secondary: #64748b;
   --bg-primary: #ffffff;
@@ -52,7 +52,7 @@ body {
   transform: translateX(-50%);
   width: 60px;
   height: 4px;
-  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  background: var(--primary-color);
   border-radius: 2px;
 }
 

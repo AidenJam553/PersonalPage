@@ -3,10 +3,10 @@
     <div class="container">
       <div class="footer-content">
         <p class="footer-text">
-          © 2025 张博涵. 保留所有权利.
+          © 2025 {{ (t.common && t.common.name) || (currentLanguage === 'zh' ? '张博涵' : 'Bohan Zhang') }}. {{ currentLanguage === 'zh' ? '保留所有权利.' : 'All rights reserved.' }}
         </p>
         <p class="footer-subtext">
-          用 Vue 3 构建
+          {{ t.footer.built }}
         </p>
       </div>
     </div>
@@ -14,6 +14,12 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useLanguage } from '../composables/useLanguage'
+import { translations } from '../utils/i18n'
+
+const { currentLanguage } = useLanguage()
+const t = computed(() => translations[currentLanguage.value])
 </script>
 
 <style scoped>

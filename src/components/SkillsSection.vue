@@ -1,105 +1,105 @@
 <template>
   <section id="skills" class="section skills-section">
     <div class="container">
-      <h2 class="section-title">技能 / 语言</h2>
+      <h2 class="section-title">{{ t.skills.title }}</h2>
       <div class="skills-content">
         <div class="skills-grid">
           <div class="skill-category">
-            <h3 class="category-title">编程语言</h3>
+            <h3 class="category-title">{{ t.skills.programming }}</h3>
             <div class="skill-items">
               <div class="skill-item">
                 <span class="skill-name">Python</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">JavaScript</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">SQL</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">Kotlin</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">Swift</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
             </div>
           </div>
           
           <div class="skill-category">
-            <h3 class="category-title">前端技术</h3>
+            <h3 class="category-title">{{ t.skills.frontend }}</h3>
             <div class="skill-items">
               <div class="skill-item">
                 <span class="skill-name">React</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">Vue 3</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">Next.js</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">TypeScript</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">HTML/CSS</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
             </div>
           </div>
           
           <div class="skill-category">
-            <h3 class="category-title">后端技术</h3>
+            <h3 class="category-title">{{ t.skills.backend }}</h3>
             <div class="skill-items">
               <div class="skill-item">
                 <span class="skill-name">Node.js</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">FastAPI</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">Flask</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">PostgreSQL</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">MySQL</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
             </div>
           </div>
           
           <div class="skill-category">
-            <h3 class="category-title">其他技能</h3>
+            <h3 class="category-title">{{ t.skills.other }}</h3>
             <div class="skill-items">
               <div class="skill-item">
                 <span class="skill-name">UI/UX设计</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">Docker</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">Git</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">Firebase</span>
-                <span class="skill-level">良好</span>
+                <span class="skill-level">{{ t.skills.level }}</span>
               </div>
               <div class="skill-item">
                 <span class="skill-name">IELTS</span>
@@ -114,6 +114,12 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useLanguage } from '../composables/useLanguage'
+import { translations } from '../utils/i18n'
+
+const { currentLanguage } = useLanguage()
+const t = computed(() => translations[currentLanguage.value])
 </script>
 
 <style scoped>

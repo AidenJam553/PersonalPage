@@ -13,6 +13,7 @@
 </template>
 
 <script setup>
+import { provideLanguage } from './composables/useLanguage'
 import NavBar from './components/NavBar.vue'
 import HeroSection from './components/HeroSection.vue'
 import AboutSection from './components/AboutSection.vue'
@@ -22,6 +23,8 @@ import ProjectsSection from './components/ProjectsSection.vue'
 import SkillsSection from './components/SkillsSection.vue'
 import ContactSection from './components/ContactSection.vue'
 import Footer from './components/Footer.vue'
+
+provideLanguage()
 </script>
 
 <style scoped>
