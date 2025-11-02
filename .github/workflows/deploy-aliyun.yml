@@ -25,49 +25,46 @@ jobs:
       - name: Build project
         run: npm run build
       
-      - name: Setup Aliyun OSS CLI
+      - name: Setup Python for OSS SDK
         run: |
-          echo "Step 1: Downloading ossutil..."
-          curl -L https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64 -o ossutil64
-          echo "Step 2: Making ossutil executable..."
-          chmod +x ossutil64
-          echo "Step 3: Moving to /usr/local/bin..."
-          sudo mv ossutil64 /usr/local/bin/ossutil
-          echo "Step 4: Verifying installation..."
-          /usr/local/bin/ossutil --version
-          echo "✅ ossutil installed successfully"
+          python3 --version
+          pip3 install oss2
       
-      - name: Configure OSS
+      - name: Deploy to OSS using Python SDK
         env:
           OSS_ENDPOINT: ${{ secrets.ALIYUN_OSS_ENDPOINT }}
           OSS_ACCESS_KEY_ID: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
           OSS_ACCESS_KEY_SECRET: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
           OSS_BUCKET: ${{ secrets.ALIYUN_OSS_BUCKET }}
         run: |
-          echo "Configuring OSS credentials..."
-          cat > ~/.ossutilconfig << 'EOF_CONFIG'
-          [Credentials]
-          language=CH
-          endpoint=${OSS_ENDPOINT}
-          accessKeyID=${OSS_ACCESS_KEY_ID}
-          accessKeySecret=${OSS_ACCESS_KEY_SECRET}
-          EOF_CONFIG
-          sed -i "s|\${OSS_ENDPOINT}|${OSS_ENDPOINT}|g" ~/.ossutilconfig
-          sed -i "s|\${OSS_ACCESS_KEY_ID}|${OSS_ACCESS_KEY_ID}|g" ~/.ossutilconfig
-          sed -i "s|\${OSS_ACCESS_KEY_SECRET}|${OSS_ACCESS_KEY_SECRET}|g" ~/.ossutilconfig
-          echo "Testing OSS connection..."
-          /usr/local/bin/ossutil ls oss://${OSS_BUCKET} || echo "Note: Bucket may be empty"
-          echo "✅ OSS configuration completed"
-      
-      - name: Deploy to OSS
-        env:
-          OSS_BUCKET: ${{ secrets.ALIYUN_OSS_BUCKET }}
-        run: |
-          echo "Checking dist directory..."
-          ls -la dist/ || (echo "❌ dist directory not found" && exit 1)
-          echo "Uploading files to OSS..."
-          /usr/local/bin/ossutil cp -r dist/ oss://${OSS_BUCKET}/ --update --force
-          echo "✅ Deployment completed successfully!"
+          python3 << 'EOF'
+          import os
+          import oss2
+          from pathlib import Path
+          
+          endpoint = os.environ['OSS_ENDPOINT']
+          access_key_id = os.environ['OSS_ACCESS_KEY_ID']
+          access_key_secret = os.environ['OSS_ACCESS_KEY_SECRET']
+          bucket_name = os.environ['OSS_BUCKET']
+          
+          print(f"Connecting to OSS: {bucket_name} at {endpoint}")
+          auth = oss2.Auth(access_key_id, access_key_secret)
+          bucket = oss2.Bucket(auth, endpoint, bucket_name)
+          
+          dist_path = Path('dist')
+          if not dist_path.exists():
+              print("❌ Error: dist directory not found!")
+              exit(1)
+          
+          print("Uploading files...")
+          for file_path in dist_path.rglob('*'):
+              if file_path.is_file():
+                  object_name = file_path.relative_to(dist_path).as_posix()
+                  print(f"Uploading: {object_name}")
+                  bucket.put_object_from_file(object_name, str(file_path))
+          
+          print("✅ Deployment completed successfully!")
+          EOF
       
       - name: Success message
         run: |
