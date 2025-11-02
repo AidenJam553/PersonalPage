@@ -17,13 +17,16 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
       
       - name: Install dependencies
-        run: npm install
+        run: npm ci || npm install
       
       - name: Build project
-        run: npm run build
+        run: |
+          echo "Building project..."
+          ls -la node_modules/.bin/ || echo "node_modules/.bin not found"
+          npx vite build
+          echo "✅ Build completed"
       
       - name: Setup Python for OSS SDK
         run: |
