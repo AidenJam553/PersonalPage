@@ -55,6 +55,17 @@ jobs:
           auth = oss2.Auth(access_key_id, access_key_secret)
           bucket = oss2.Bucket(auth, endpoint, bucket_name)
           
+          # Check bucket ACL (permissions)
+          try:
+              acl = bucket.get_bucket_acl().acl
+              print(f"📋 Bucket ACL: {acl}")
+              if acl != oss2.BUCKET_ACL_PUBLIC_READ:
+                  print("⚠️ Warning: Bucket is not set to PUBLIC_READ!")
+                  print("   Please set bucket ACL to '公共读' in OSS console:")
+                  print("   Permission Control → Read/Write Permissions → Public Read")
+          except Exception as e:
+              print(f"⚠️ Could not check bucket ACL: {e}")
+          
           dist_path = Path('dist')
           if not dist_path.exists():
               print("❌ Error: dist directory not found!")
@@ -82,30 +93,31 @@ jobs:
               suffix = file_path.suffix.lower()
               return mime_types.get(suffix, mimetypes.guess_type(str(file_path))[0] or 'application/octet-stream')
           
-          print("Uploading files...")
+          print("\n📤 Uploading files...")
+          uploaded_files = []
           for file_path in dist_path.rglob('*'):
               if file_path.is_file():
                   object_name = file_path.relative_to(dist_path).as_posix()
-                  # Normalize path separators for OSS
                   object_name = object_name.replace('\\', '/')
                   content_type = get_content_type(file_path)
                   
-                  # Set headers for HTML files
                   headers = {'Content-Type': content_type}
                   if file_path.suffix.lower() == '.html':
                       headers['Cache-Control'] = 'no-cache'
+                      headers['Content-Disposition'] = 'inline'  # Important: display inline, not download
                   else:
                       headers['Cache-Control'] = 'public, max-age=31536000'
                   
-                  print(f"Uploading: {object_name} (Content-Type: {content_type})")
+                  print(f"  📄 {object_name} → Content-Type: {content_type}")
                   bucket.put_object_from_file(
                       object_name,
                       str(file_path),
                       headers=headers
                   )
+                  uploaded_files.append(object_name)
           
           # Configure static website hosting
-          print("Configuring static website hosting...")
+          print("\n🌐 Configuring static website hosting...")
           try:
               website_config = oss2.models.BucketWebsite(
                   index_file='index.html',
@@ -113,13 +125,37 @@ jobs:
               )
               bucket.put_bucket_website(website_config)
               print("✅ Static website hosting configured!")
+              
+              # Verify configuration
+              try:
+                  website_info = bucket.get_bucket_website()
+                  print(f"   Index file: {website_info.index_file}")
+                  print(f"   Error file: {website_info.error_file}")
+              except:
+                  pass
           except Exception as e:
               print(f"⚠️ Warning: Could not configure static website hosting: {e}")
-              print("Please configure it manually in OSS console:")
-              print("  - Default index page: index.html")
-              print("  - Default 404 page: index.html")
+              print("   Please configure manually in OSS console:")
+              print("   Data Management → Static Page → Enable → Set index.html")
           
-          print("✅ Deployment completed successfully!")
+          # Verify index.html was uploaded
+          print("\n🔍 Verifying deployment...")
+          try:
+              if bucket.object_exists('index.html'):
+                  meta = bucket.head_object('index.html')
+                  print(f"✅ index.html exists")
+                  print(f"   Content-Type: {meta.headers.get('Content-Type', 'Not set')}")
+                  print(f"   Content-Disposition: {meta.headers.get('Content-Disposition', 'Not set')}")
+              else:
+                  print("❌ ERROR: index.html not found in bucket!")
+          except Exception as e:
+              print(f"⚠️ Could not verify index.html: {e}")
+          
+          # Print access URLs
+          print("\n🌐 Access your website:")
+          print(f"   HTTP:  http://{bucket_name}.{endpoint}")
+          print(f"   (Use HTTP, not HTTPS for static website hosting)")
+          print(f"\n✅ Deployment completed successfully!")
           EOF
       
       - name: Success message
