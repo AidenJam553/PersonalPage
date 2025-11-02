@@ -47,8 +47,8 @@ jobs:
           ossutil cp -r ./dist/ oss://${{ secrets.ALIYUN_OSS_BUCKET }}/ --update --force
           echo "✅ Deployment completed successfully!"
       
-      - name: Clear CDN cache (optional)
-        if: ${{ secrets.ALIYUN_CDN_URL != null && secrets.ALIYUN_CDN_URL != '' }}
+      - name: Success message
         run: |
-          echo "CDN cache clear can be configured separately"
+          echo "🚀 Website deployed successfully to Aliyun OSS!"
+          echo "🌐 Access your site at: https://${{ secrets.ALIYUN_OSS_BUCKET }}.oss-cn-beijing.aliyuncs.com"
 
