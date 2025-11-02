@@ -48,7 +48,7 @@ jobs:
           echo "✅ Deployment completed successfully!"
       
       - name: Clear CDN cache (optional)
-        if: ${{ secrets.ALIYUN_CDN_URL != '' }}
+        if: ${{ secrets.ALIYUN_CDN_URL != null && secrets.ALIYUN_CDN_URL != '' }}
         run: |
           echo "CDN cache clear can be configured separately"
 
