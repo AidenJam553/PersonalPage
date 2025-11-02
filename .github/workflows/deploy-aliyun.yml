@@ -27,17 +27,22 @@ jobs:
       
       - name: Setup Aliyun OSS CLI
         run: |
-          curl -o ossutil64 https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64
-          chmod 755 ossutil64
-          sudo mv ossutil64 /usr/local/bin/ossutil
-          ossutil --version || echo "OSS CLI installed"
+          echo "Downloading ossutil..."
+          curl -L -o ossutil64 https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64 || exit 1
+          chmod +x ossutil64
+          sudo mv ossutil64 /usr/local/bin/ossutil || exit 1
+          echo "Verifying installation..."
+          /usr/local/bin/ossutil --version || exit 1
+          echo "✅ ossutil installed successfully"
       
       - name: Configure OSS
         env:
           OSS_ENDPOINT: ${{ secrets.ALIYUN_OSS_ENDPOINT }}
           OSS_ACCESS_KEY_ID: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
           OSS_ACCESS_KEY_SECRET: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
+          OSS_BUCKET: ${{ secrets.ALIYUN_OSS_BUCKET }}
         run: |
+          echo "Configuring OSS credentials..."
           mkdir -p ~/.ossutilconfig
           cat > ~/.ossutilconfig << EOF
           [Credentials]
@@ -46,11 +51,21 @@ jobs:
           accessKeyID=${OSS_ACCESS_KEY_ID}
           accessKeySecret=${OSS_ACCESS_KEY_SECRET}
           EOF
-          ossutil ls oss://${{ secrets.ALIYUN_OSS_BUCKET }} || echo "Configuration completed"
+          echo "Testing OSS connection..."
+          /usr/local/bin/ossutil ls oss://${OSS_BUCKET} || echo "Note: Bucket may be empty, continuing..."
+          echo "✅ OSS configuration completed"
       
       - name: Deploy to OSS
+        env:
+          OSS_BUCKET: ${{ secrets.ALIYUN_OSS_BUCKET }}
         run: |
-          ossutil cp -r ./dist/ oss://${{ secrets.ALIYUN_OSS_BUCKET }}/ --update --force
+          echo "Starting deployment to OSS..."
+          if [ ! -d "./dist" ]; then
+            echo "❌ Error: dist directory not found!"
+            exit 1
+          fi
+          echo "Uploading files..."
+          /usr/local/bin/ossutil cp -r ./dist/ oss://${OSS_BUCKET}/ --update --force || exit 1
           echo "✅ Deployment completed successfully!"
       
       - name: Success message
