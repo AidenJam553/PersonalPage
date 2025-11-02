@@ -27,12 +27,13 @@ jobs:
       
       - name: Setup Aliyun OSS CLI
         run: |
-          set -e
-          echo "Downloading ossutil..."
-          curl -fL https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64 -o /tmp/ossutil64
-          chmod +x /tmp/ossutil64
-          sudo mv /tmp/ossutil64 /usr/local/bin/ossutil
-          echo "Testing ossutil..."
+          echo "Step 1: Downloading ossutil..."
+          curl -L https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64 -o ossutil64
+          echo "Step 2: Making ossutil executable..."
+          chmod +x ossutil64
+          echo "Step 3: Moving to /usr/local/bin..."
+          sudo mv ossutil64 /usr/local/bin/ossutil
+          echo "Step 4: Verifying installation..."
           /usr/local/bin/ossutil --version
           echo "✅ ossutil installed successfully"
       
@@ -44,29 +45,28 @@ jobs:
           OSS_BUCKET: ${{ secrets.ALIYUN_OSS_BUCKET }}
         run: |
           echo "Configuring OSS credentials..."
-          mkdir -p ~/.ossutilconfig
-          cat > ~/.ossutilconfig << EOF
+          cat > ~/.ossutilconfig << 'EOF_CONFIG'
           [Credentials]
           language=CH
           endpoint=${OSS_ENDPOINT}
           accessKeyID=${OSS_ACCESS_KEY_ID}
           accessKeySecret=${OSS_ACCESS_KEY_SECRET}
-          EOF
+          EOF_CONFIG
+          sed -i "s|\${OSS_ENDPOINT}|${OSS_ENDPOINT}|g" ~/.ossutilconfig
+          sed -i "s|\${OSS_ACCESS_KEY_ID}|${OSS_ACCESS_KEY_ID}|g" ~/.ossutilconfig
+          sed -i "s|\${OSS_ACCESS_KEY_SECRET}|${OSS_ACCESS_KEY_SECRET}|g" ~/.ossutilconfig
           echo "Testing OSS connection..."
-          /usr/local/bin/ossutil ls oss://${OSS_BUCKET} || echo "Note: Bucket may be empty, continuing..."
+          /usr/local/bin/ossutil ls oss://${OSS_BUCKET} || echo "Note: Bucket may be empty"
           echo "✅ OSS configuration completed"
       
       - name: Deploy to OSS
         env:
           OSS_BUCKET: ${{ secrets.ALIYUN_OSS_BUCKET }}
         run: |
-          echo "Starting deployment to OSS..."
-          if [ ! -d "./dist" ]; then
-            echo "❌ Error: dist directory not found!"
-            exit 1
-          fi
-          echo "Uploading files..."
-          /usr/local/bin/ossutil cp -r ./dist/ oss://${OSS_BUCKET}/ --update --force || exit 1
+          echo "Checking dist directory..."
+          ls -la dist/ || (echo "❌ dist directory not found" && exit 1)
+          echo "Uploading files to OSS..."
+          /usr/local/bin/ossutil cp -r dist/ oss://${OSS_BUCKET}/ --update --force
           echo "✅ Deployment completed successfully!"
       
       - name: Success message
