@@ -124,12 +124,59 @@ http://bohan-portfolio.oss-cn-beijing.aliyuncs.com
 
 ---
 
-## 📞 还是不行？告诉我这些信息
+## 🚨 **重要发现！问题在第4项**
 
-如果以上步骤都试过了还是不行，请告诉我：
+根据你的截图，**问题找到了！**
+
+### ❌ **你访问的是错误的URL：**
+
+从截图看，你访问的地址是：
+```
+https://bohan-portfolio.oss-cn-beijing.aliyuncs.com/index.html
+```
+
+**这是文件对象URL，不是静态网站托管URL！**
+
+截图中的黄色警告框明确说明了：
+> "访问使用 OSS 默认域名生成的文件 URL 会触发浏览器默认强制下载"
+
+### ✅ **正确的访问方式：**
+
+**不要访问文件URL！** 应该访问：
+
+```
+http://bohan-portfolio.oss-cn-beijing.aliyuncs.com
+```
+
+**关键区别：**
+- ❌ `https://.../index.html` - 文件对象URL（会下载）
+- ✅ `http://...` - 静态网站托管URL（会显示网页）
+- ✅ 注意是 `http://` **不是** `https://`
+- ✅ 不要加 `/index.html`
+
+### 📋 **如何找到正确的静态网站托管地址？**
+
+1. 进入 OSS 控制台
+2. 进入 Bucket：`bohan-portfolio`
+3. 点击：**数据管理** → **静态页面**
+4. 在页面中查找：
+   - **"静态网站访问地址"**
+   - **"网站端点"**
+   - **"Website Endpoint"**
+5. 如果页面没有显示，地址格式是：
+   ```
+   http://bohan-portfolio.oss-cn-beijing.aliyuncs.com
+   ```
+   （注意：HTTP，不是HTTPS，不要加/index.html）
+
+---
+
+## 📞 如果还是不行，告诉我这些信息
+
+如果使用正确的静态网站托管地址（`http://bohan-portfolio.oss-cn-beijing.aliyuncs.com`）还是下载文件，请告诉我：
 
 1. **你访问的具体地址是什么？**
-   - （比如：`http://bohan-portfolio.oss-cn-beijing.aliyuncs.com`）
+   - （必须是 `http://bohan-portfolio.oss-cn-beijing.aliyuncs.com`，不要加 `/index.html`）
 
 2. **Bucket权限是什么？**
    - （在 权限控制 → 读写权限 看到的）
