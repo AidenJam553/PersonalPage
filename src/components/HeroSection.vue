@@ -2,6 +2,9 @@
   <section id="home" class="hero">
     <div class="container">
       <div class="hero-content">
+        <div class="hero-image-wrapper">
+          <img src="/Photo.jpg" alt="Bohan Zhang" class="hero-image" />
+        </div>
         <div class="hero-text">
           <h1 class="hero-title">
             {{ t.hero.greeting }} <span class="highlight">{{ (t.common && t.common.name) || (currentLanguage === 'zh' ? '张博涵' : 'Bohan Zhang') }}</span>
@@ -75,9 +78,36 @@ const scrollTo = (id) => {
 .hero-content {
   position: relative;
   z-index: 2;
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.hero-image-wrapper {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.hero-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+.hero-image:hover {
+  transform: scale(1.05);
+}
+
+.hero-text {
   text-align: center;
+  width: 100%;
 }
 
 .hero-title {
@@ -160,6 +190,11 @@ const scrollTo = (id) => {
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .info-item:hover {
@@ -171,6 +206,8 @@ const scrollTo = (id) => {
   font-size: 0.875rem;
   color: var(--text-secondary);
   margin-bottom: 0.5rem;
+  text-align: center;
+  width: 100%;
 }
 
 .info-value {
@@ -178,6 +215,9 @@ const scrollTo = (id) => {
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--text-primary);
+  text-align: center;
+  word-break: break-word;
+  width: 100%;
 }
 
 .hero-background {
@@ -225,6 +265,15 @@ const scrollTo = (id) => {
   
   .hero-info {
     grid-template-columns: 1fr;
+  }
+  
+  .hero-image {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .hero-content {
+    gap: 1.5rem;
   }
 }
 </style>
