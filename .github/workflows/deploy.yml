@@ -1,9 +1,12 @@
 name: Deploy to GitHub Pages
 
+# 如果只使用阿里云OSS部署，可以禁用此工作流
+# 取消下面的注释来禁用：
+# on: workflow_dispatch: ~
 on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+  workflow_dispatch: ~
+  # push:
+  #   branches: [ main ]
 
 permissions:
   contents: read
